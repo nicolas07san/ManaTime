@@ -9,7 +9,7 @@ screen_width = 1280
 screen_height = 720
 screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
-logo = pygame.image.load('images/time.png')
+logo = pygame.image.load('images/ampulheta.png')
 pygame.display.set_caption('ManaTime')
 pygame.display.set_icon(logo)
 
@@ -51,7 +51,7 @@ class Tile(pygame.sprite.Sprite):
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('images/background.jpg')
+        self.image = pygame.image.load('images/background.png')
         self.rect = pygame.Rect((0, 0), (self.image.get_width(), self.image.get_height()))
 
 
@@ -385,7 +385,6 @@ while True:
                 player.m_right = False
             if event.key == pygame.K_j:
                 bullet.shoot = False
-
 
     show_time(30, 30, c)
     current_time = pygame.time.get_ticks()
