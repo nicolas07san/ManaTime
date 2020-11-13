@@ -9,15 +9,16 @@ screen_width = 1280
 screen_height = 720
 screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
+#Logo e Nome da janela
 logo = pygame.image.load('images/ampulheta.png')
 pygame.display.set_caption('ManaTime')
 pygame.display.set_icon(logo)
 
 # Escala da Tela
-scale = 2
+scale = 3
 display = pygame.Surface((screen_width / scale, screen_height / scale))
 
-#Timer
+#Timers
 current_time = 0
 dmg_time = 0
 c_time = 0
@@ -39,6 +40,7 @@ def load_map(path):
 game_map = load_map('map')
 
 
+#Classes
 class Tile(pygame.sprite.Sprite):
     def __init__(self, linha, coluna):
         super().__init__()
@@ -48,11 +50,13 @@ class Tile(pygame.sprite.Sprite):
         y = linha * self.tile_size
         self.rect = pygame.Rect((x, y), (self.tile_size, self.tile_size))
 
+
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('images/background.png')
         self.rect = pygame.Rect((0, 0), (self.image.get_width(), self.image.get_height()))
+
 
 class Ampulheta(pygame.sprite.Sprite):
     def __init__(self, linha, coluna):
@@ -133,7 +137,6 @@ class Player(pygame.sprite.Sprite):
         self.left = False
         self.jump = 1
         self.collision = False
-        self.jumping = True
         self.damage = False
         self.current_sprite = 0
         self.anim_speed = 0.20
@@ -329,8 +332,8 @@ while True:
     cam.draw_group(tiles)
     cam.draw_group(bullets)
     cam.draw_group(enemies)
-    cam.draw_group(players)
     cam.draw_group(amps)
+    cam.draw_group(players)
     cam.paint(display)
 
     players.update()
