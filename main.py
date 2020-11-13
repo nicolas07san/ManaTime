@@ -22,7 +22,7 @@ current_time = 0
 dmg_time = 0
 c_time = 0
 l_time = 0
-time = 60
+time = 30
 
 # Carregando Mapa
 def load_map(path):
@@ -54,6 +54,13 @@ class Background(pygame.sprite.Sprite):
         self.image = pygame.image.load('images/background.png')
         self.rect = pygame.Rect((0, 0), (self.image.get_width(), self.image.get_height()))
 
+class Ampulheta(pygame.sprite.Sprite):
+    def __init__(self, linha, coluna):
+        super().__init__()
+        self.image = pygame.image.load('images/ampulheta.png')
+        self.rect = pygame.Rect((coluna*(self.image.get_width()), linha * (self.image.get_height())),
+                                (self.image.get_width(), self.image.get_height()))
+
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, linha, coluna):
@@ -69,7 +76,7 @@ class Enemy(pygame.sprite.Sprite):
         self.anim.append(pygame.image.load('images/ghost_2.png'))
         self.image = self.anim[self.current_sprite]
         self.rect = pygame.Rect((coluna * (self.image.get_width()), linha * (self.image.get_height())),
-                                ((self.image.get_width()), self.image.get_height()))
+                                (32, 32))
 
     def movement(self):
         self.distance += 1
@@ -147,7 +154,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.idle
         self.rect = self.image.get_rect()
         self.intencao_pos = list(self.rect.center)
-        self.intencao_pos = [1000,100]
+        self.intencao_pos = [64, 1312]
 
     def movement(self):
         if self.m_right:
@@ -294,17 +301,21 @@ bgs.add(bg)
 tiles = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+amps = pygame.sprite.Group()
 
 y = 0
 for lin in game_map:
     x = 0
     for tile in lin:
-        if tile == '1' or tile == '2':
+        if tile == '1':
             tile = Tile(y, x)
             tile.add(tiles)
         if tile == '3':
             enemy = Enemy(y, x)
             enemies.add(enemy)
+        if tile == '5':
+            amp = Ampulheta(y, x)
+            amps.add(amp)
         x += 1
     y += 1
 
@@ -319,6 +330,7 @@ while True:
     cam.draw_group(bullets)
     cam.draw_group(enemies)
     cam.draw_group(players)
+    cam.draw_group(amps)
     cam.paint(display)
 
     players.update()
@@ -328,8 +340,11 @@ while True:
     cam.move(player.rect.center)
 
     if pygame.sprite.groupcollide(enemies, bullets, True, True):
-        time += 10
+        time += 5
         c = 'green'
+
+    if pygame.sprite.groupcollide(amps, players, False, False):
+        print('You Win')
 
     if current_time - dmg_time >= 4000:
         player.damage = False
