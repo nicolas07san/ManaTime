@@ -13,7 +13,7 @@ screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
 
 # Logo e Nome da janela
-logo = pygame.image.load('images/ampulheta.png')
+logo = pygame.image.load('images/logo.png')
 pygame.display.set_caption('ManaTime')
 pygame.display.set_icon(logo)
 
@@ -27,6 +27,8 @@ dmg_time = 0
 c_time = 0
 l_time = 0
 
+win = False
+lose = False
 
 # Carregando Mapa
 def load_map(path):
@@ -293,27 +295,15 @@ class Camera:
 font = pygame.font.Font('pixelart.ttf', 48)
 font2 = pygame.font.Font('pixelart.ttf', 16)
 
-player = Player()
-bullet = Bullet(player)
-players = pygame.sprite.Group()
-player.add(players)
-bg = Background()
-bgs = pygame.sprite.Group()
-bgs.add(bg)
-tiles = pygame.sprite.Group()
-enemies = pygame.sprite.Group()
-bullets = pygame.sprite.Group()
-amps = pygame.sprite.Group()
-
 click = False
 
+player = Player()
 
 def draw_text(text, fonte, color, surface, x, y):
     textobj = fonte.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.center = (x, y)
     surface.blit(textobj, textrect)
-
 
 def main_menu():
     global click
@@ -482,8 +472,25 @@ def creditos():
 
 
 def game():
-    global bullet, l_time, dmg_time, current_time, click
-    running = True
+    global bullet, l_time, dmg_time, current_time, click, win, lose
+
+    win = False
+    lose = False
+
+    player = Player()
+    bullet = Bullet(player)
+    players = pygame.sprite.Group()
+    player.add(players)
+    bg = Background()
+    bgs = pygame.sprite.Group()
+    bgs.add(bg)
+    tiles = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
+    bullets = pygame.sprite.Group()
+    amps = pygame.sprite.Group()
+
+    player.intencao_pos = [64, 1312]
+    time = 30
 
     def show_time(tx, ty, color):
         time_txt = font2.render("Tempo " + str(time), True, color)
@@ -491,7 +498,6 @@ def game():
 
     click = False
 
-    time = 30
     c = 'white'
     y = 0
     for lin in game_map:
@@ -511,6 +517,7 @@ def game():
 
     cam = Camera(player.rect.topleft, ((screen_width / scale), (screen_height / scale)))
 
+    running = True
     while running:
 
         cam.start_drawing()
@@ -533,7 +540,9 @@ def game():
             c = 'green'
 
         if pygame.sprite.groupcollide(amps, players, False, False):
-            pass
+            win = True
+            running = False
+            endgame()
 
         if current_time - dmg_time >= 4000:
             player.damage = False
@@ -554,7 +563,9 @@ def game():
             l_time = current_time
             time -= 1
         if time <= 0:
-            pass
+            lose = True
+            running = False
+            endgame()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -599,6 +610,71 @@ def game():
         screen.blit(surf, (0, 0))
         pygame.display.flip()
         clock.tick(60)
+
+def endgame():
+    global click,win,lose
+    running = True
+    while running:
+        screen.fill('darkslategray2')
+
+        mx, my = pygame.mouse.get_pos()
+
+        color_b = 'gray50'
+
+        color_j = 'gray50'
+
+        # Botão Back
+        back = pygame.Rect(50, 600, 200, 50)
+        back2 = pygame.Rect(0, 0, 210, 60)
+        back2.center = back.center
+
+        #Botão Jogar Novamente
+        jn = pygame.Rect(930, 600, 300, 50)
+        jn2 = pygame.Rect(0, 0, 310, 60)
+        jn2.center = jn.center
+
+        #Botão Menu
+        if back.collidepoint(mx, my):
+            color_b = 'gray70'
+            if click:
+                color_b = 'gray30'
+                main_menu()
+
+        #Botão Jogar Novamente
+        if jn.collidepoint(mx, my):
+            color_j = 'gray70'
+            if click:
+                color_j = 'gray30'
+                game()
+
+        #Draw Jogar Novamente
+        pygame.draw.rect(screen, 'gray9', jn2)
+        pygame.draw.rect(screen, color_j, jn)
+        draw_text('Jogar Novamente', font2, 'white', screen, jn.centerx, jn.centery)
+
+        #Draw Menu
+        pygame.draw.rect(screen, 'gray9', back2)
+        pygame.draw.rect(screen, color_b, back)
+        draw_text('Menu', font2, 'white', screen, back.centerx, back.centery)
+
+        #Mensagem de vitória
+        if win:
+            draw_text('PARABENS VOCÊ VENCEU!', font, 'white', screen, 1280 / 2, 50)
+        if lose:
+            draw_text('Que pena você perdeu...', font, 'white', screen, 1280 / 2, 50)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = True
+            if event.type == pygame.MOUSEBUTTONUP:
+                click = False
+
+        pygame.display.update()
+        clock.tick(60)
+
 
 
 main_menu()
