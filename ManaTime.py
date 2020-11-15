@@ -10,7 +10,7 @@ clock = pygame.time.Clock()
 screen_width = 1280
 screen_height = 720
 screen_size = (1280, 720)
-screen = pygame.display.set_mode(screen_size)
+screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
 
 # Logo e Nome da janela
 logo = pygame.image.load('images/logo.png')
@@ -29,6 +29,7 @@ l_time = 0
 
 win = False
 lose = False
+
 
 # Carregando Mapa
 def load_map(path):
@@ -268,7 +269,7 @@ class Camera:
         self.offset_x = 0
         self.offset_y = 0
         self.clean_image = pygame.Surface(self.window.size)
-        self.clean_image.fill('darkslategray2')
+        self.clean_image.fill('darkslategray4')
         self.draw_area = pygame.Surface(self.window.size)
 
     def in_viewport(self, r):
@@ -299,42 +300,45 @@ click = False
 
 player = Player()
 
+
 def draw_text(text, fonte, color, surface, x, y):
     textobj = fonte.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.center = (x, y)
     surface.blit(textobj, textrect)
 
+
 def main_menu():
     global click
     while True:
 
-        screen.fill('darkslategray2')
-        draw_text('MANA', font, 'white', screen, 1280 / 2, 100)
-        draw_text('TIME', font, 'white', screen, 1280 / 2, 150)
+        screen.fill('darkslategray4')
+        draw_text('MANA', font, 'white', screen, screen_width / 2, 100)
+        draw_text('TIME', font, 'white', screen, screen_width / 2, 150)
 
         color_htp = 'gray50'
         color_pb = 'gray50'
         color_c = 'gray50'
+        color_fb = 'gray50'
 
         mx, my = pygame.mouse.get_pos()
 
         # Play Button
         pb = pygame.Rect(50, 50, 200, 50)
         pb2 = pygame.Rect(50, 50, 210, 60)
-        pb.center = (1280 / 2, (720 / 2 + 100))
+        pb.center = (screen_width / 2, (screen_height / 2 + 100))
         pb2.center = pb.center
 
         # Botão Como Jogar
         htp = pygame.Rect(50, 150, 200, 50)
         htp2 = pygame.Rect(50, 150, 210, 60)
-        htp.center = (1280 / 2, (720 / 2 + 200))
+        htp.center = (screen_width / 2, (screen_height / 2 + 200))
         htp2.center = htp.center
 
         # Botão Créditos
         cb = pygame.Rect(50, 150, 200, 50)
         cb2 = pygame.Rect(50, 150, 210, 60)
-        cb.center = (1280 / 2, (720 / 2 + 300))
+        cb.center = (screen_width / 2, (screen_height / 2 + 300))
         cb2.center = cb.center
 
         if pb.collidepoint(mx, my):
@@ -384,7 +388,7 @@ def h2p():
     global click
     running = True
     while running:
-        screen.fill('darkslategray2')
+        screen.fill('darkslategray4')
 
         mx, my = pygame.mouse.get_pos()
 
@@ -405,14 +409,14 @@ def h2p():
         pygame.draw.rect(screen, color_b, back)
         draw_text('Voltar', font2, 'white', screen, back.centerx, back.centery)
 
-        draw_text('Como Jogar', font, 'white', screen, 1280 / 2, 50)
+        draw_text('Como Jogar', font, 'white', screen, screen_width / 2, 50)
 
-        draw_text('Seu objetivo é chegar ao topo da torre antes do tempo acabar', font2, 'white', screen, 1280 / 2, 200)
+        draw_text('Seu objetivo é chegar ao topo da torre antes do tempo acabar', font2, 'white', screen, screen_width / 2, 200)
         draw_text('Mate fantasmas para ganhar tempo, e evite-os para não perder tempo', font2, 'white', screen,
-                  1280 / 2,
+                  screen_width / 2,
                   250)
-        draw_text('Utilize as setas direcionais para se mover e J para atirar', font2, 'white', screen, 1280 / 2, 300)
-        draw_text('E lembre-se atirar consome tempo', font2, 'white', screen, 1280 / 2, 350)
+        draw_text('Utilize as setas direcionais para se mover e J para atirar', font2, 'white', screen, screen_width / 2, 300)
+        draw_text('E lembre-se atirar consome tempo', font2, 'white', screen, screen_width / 2, 350)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -431,7 +435,7 @@ def creditos():
     global click
     running = True
     while running:
-        screen.fill('darkslategray2')
+        screen.fill('darkslategray4')
 
         mx, my = pygame.mouse.get_pos()
 
@@ -452,11 +456,11 @@ def creditos():
         pygame.draw.rect(screen, color_b, back)
         draw_text('Voltar', font2, 'white', screen, back.centerx, back.centery)
 
-        draw_text('Créditos', font, 'white', screen, 1280 / 2, 50)
+        draw_text('Créditos', font, 'white', screen, screen_width / 2, 50)
 
-        draw_text('Programação: Nicolas Gonçalves', font2, 'white', screen, 1280 / 2, 200)
-        draw_text('Arte: Lucas Canute', font2, 'white', screen, 1280 / 2, 250)
-        draw_text('Sons', font2, 'white', screen, 1280 / 2, 300)
+        draw_text('Programação: Nicolas Gonçalves', font2, 'white', screen, screen_width / 2, 200)
+        draw_text('Arte: Lucas Canute', font2, 'white', screen, screen_width / 2, 250)
+        draw_text('Sons', font2, 'white', screen, screen_width / 2, 300)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -611,11 +615,12 @@ def game():
         pygame.display.flip()
         clock.tick(60)
 
+
 def endgame():
-    global click,win,lose
+    global click, win, lose
     running = True
     while running:
-        screen.fill('darkslategray2')
+        screen.fill('darkslategray4')
 
         mx, my = pygame.mouse.get_pos()
 
@@ -659,9 +664,9 @@ def endgame():
 
         #Mensagem de vitória
         if win:
-            draw_text('PARABENS VOCÊ VENCEU!', font, 'white', screen, 1280 / 2, 50)
+            draw_text('PARABENS VOCÊ VENCEU!', font, 'white', screen, screen_width / 2, 50)
         if lose:
-            draw_text('Que pena você perdeu...', font, 'white', screen, 1280 / 2, 50)
+            draw_text('Que pena você perdeu...', font, 'white', screen, screen_width / 2, 50)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -674,7 +679,6 @@ def endgame():
 
         pygame.display.update()
         clock.tick(60)
-
 
 
 main_menu()
