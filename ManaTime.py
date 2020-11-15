@@ -30,6 +30,7 @@ l_time = 0
 win = False
 lose = False
 
+pop_sound = pygame.mixer.Sound('sounds/pop.wav')
 
 # Carregando Mapa
 def load_map(path):
@@ -147,6 +148,10 @@ class Player(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.anim_speed = 0.20
 
+        self.j_sound = pygame.mixer.Sound('sounds/jump.wav')
+        self.k_sound = pygame.mixer.Sound('sounds/kill.wav')
+        self.s_sound = pygame.mixer.Sound('sounds/shoot.wav')
+
         # Carregando imagens
         self.idle = pygame.image.load('images/idle.png')
         self.air_shoot = pygame.image.load('images/jump_shoot.png')
@@ -232,6 +237,8 @@ class Player(pygame.sprite.Sprite):
     def pular(self):
         self.speedY = -3
         self.intencao_pos[1] += self.speedY
+        self.jump -= 1
+        self.j_sound.play()
 
     def update(self):
         self.movement()
@@ -309,9 +316,10 @@ def draw_text(text, fonte, color, surface, x, y):
 
 
 def main_menu():
-    global click
-    while True:
+    global click, pop_sound, s
 
+    while True:
+        s = False
         screen.fill('darkslategray4')
         draw_text('MANA', font, 'white', screen, screen_width / 2, 100)
         draw_text('TIME', font, 'white', screen, screen_width / 2, 150)
@@ -319,7 +327,6 @@ def main_menu():
         color_htp = 'gray50'
         color_pb = 'gray50'
         color_c = 'gray50'
-        color_fb = 'gray50'
 
         mx, my = pygame.mouse.get_pos()
 
@@ -344,19 +351,19 @@ def main_menu():
         if pb.collidepoint(mx, my):
             color_pb = 'gray70'
             if click:
-                color_pb = 'gray30'
+                pop_sound.play()
                 game()
 
         if htp.collidepoint(mx, my):
             color_htp = 'gray70'
             if click:
-                color_htp = 'gray30'
+                pop_sound.play()
                 h2p()
 
         if cb.collidepoint(mx, my):
             color_c = 'gray70'
             if click:
-                color_c = 'gray30'
+                pop_sound.play()
                 creditos()
 
         pygame.draw.rect(screen, 'gray9', pb2)
@@ -385,7 +392,7 @@ def main_menu():
 
 
 def h2p():
-    global click
+    global click, pop_sound
     running = True
     while running:
         screen.fill('darkslategray4')
@@ -402,7 +409,7 @@ def h2p():
         if back.collidepoint(mx, my):
             color_b = 'gray70'
             if click:
-                color_b = 'gray30'
+                pop_sound.play()
                 main_menu()
 
         pygame.draw.rect(screen, 'gray9', back2)
@@ -432,7 +439,7 @@ def h2p():
 
 
 def creditos():
-    global click
+    global click, pop_sound
     running = True
     while running:
         screen.fill('darkslategray4')
@@ -449,7 +456,7 @@ def creditos():
         if back.collidepoint(mx, my):
             color_b = 'gray70'
             if click:
-                color_b = 'gray30'
+                pop_sound.play()
                 main_menu()
 
         pygame.draw.rect(screen, 'gray9', back2)
@@ -460,7 +467,8 @@ def creditos():
 
         draw_text('Programação: Nicolas Gonçalves', font2, 'white', screen, screen_width / 2, 200)
         draw_text('Arte: Lucas Canute', font2, 'white', screen, screen_width / 2, 250)
-        draw_text('Sons', font2, 'white', screen, screen_width / 2, 300)
+        draw_text('Musica: Misty Dungeon, from PlayOnLoop.com ', font2, 'white', screen, screen_width / 2, 300)
+        draw_text('Licenciado sob Creative Commons por Atribuição 4.0 ', font2, 'white', screen, screen_width / 2, 350)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -477,6 +485,10 @@ def creditos():
 
 def game():
     global bullet, l_time, dmg_time, current_time, click, win, lose
+
+    music = pygame.mixer.Sound('sounds/game.wav')
+    music.set_volume(10)
+    music.play(-1)
 
     win = False
     lose = False
@@ -540,11 +552,13 @@ def game():
         cam.move(player.rect.center)
 
         if pygame.sprite.groupcollide(enemies, bullets, True, True):
+            player.k_sound.play()
             time += 5
             c = 'green'
 
         if pygame.sprite.groupcollide(amps, players, False, False):
             win = True
+            music.stop()
             running = False
             endgame()
 
@@ -567,6 +581,7 @@ def game():
             l_time = current_time
             time -= 1
         if time <= 0:
+            music.stop()
             lose = True
             running = False
             endgame()
@@ -583,13 +598,13 @@ def game():
                 if event.key == pygame.K_UP:
                     if player.jump > 0:
                         player.pular()
-                        player.jump -= 1
                 if event.key == pygame.K_j:
                     if not player.damage:
                         bullet = Bullet(player)
                         bullet.rect.center = player.rect.center
                         bullets.add(bullet)
                         bullet.shoot = True
+                        player.s_sound.play()
                         time -= 1
                         c = 'red'
                     if player.right:
@@ -597,6 +612,7 @@ def game():
                     if player.left:
                         bullet.speedX = -8
                 if event.key == pygame.K_ESCAPE:
+                    music.stop()
                     main_menu()
                     running = False
 
@@ -642,14 +658,14 @@ def endgame():
         if back.collidepoint(mx, my):
             color_b = 'gray70'
             if click:
-                color_b = 'gray30'
+                pop_sound.play()
                 main_menu()
 
         #Botão Jogar Novamente
         if jn.collidepoint(mx, my):
             color_j = 'gray70'
             if click:
-                color_j = 'gray30'
+                pop_sound.play()
                 game()
 
         #Draw Jogar Novamente
