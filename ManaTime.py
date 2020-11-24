@@ -10,10 +10,10 @@ clock = pygame.time.Clock()
 screen_width = 1280
 screen_height = 720
 screen_size = (1280, 720)
-screen = pygame.display.set_mode(screen_size, pygame.RESIZABLE)
+screen = pygame.display.set_mode(screen_size)
 
 # Logo e Nome da janela
-logo = pygame.image.load('images/logo.png')
+logo = pygame.image.load('data/images/logo.png')
 pygame.display.set_caption('ManaTime')
 pygame.display.set_icon(logo)
 
@@ -30,11 +30,11 @@ l_time = 0
 win = False
 lose = False
 
-pop_sound = pygame.mixer.Sound('sounds/pop.wav')
+pop_sound = pygame.mixer.Sound('data/sounds/pop.wav')
 
 # Carregando Mapa
 def load_map(path):
-    f = open(path + '.txt', 'r')
+    f = open('data/' + path + '.txt', 'r')
     data = f.read()
     f.close()
     data = data.split('\n')
@@ -51,7 +51,7 @@ game_map = load_map('map')
 class Tile(pygame.sprite.Sprite):
     def __init__(self, linha, coluna):
         super().__init__()
-        self.image = pygame.image.load('images/tile.png')
+        self.image = pygame.image.load('data/images/tile.png')
         self.tile_size = 32
         x = coluna * self.tile_size
         y = linha * self.tile_size
@@ -61,14 +61,14 @@ class Tile(pygame.sprite.Sprite):
 class Background(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('images/background.png')
+        self.image = pygame.image.load('data/images/background.png')
         self.rect = pygame.Rect((0, 0), (self.image.get_width(), self.image.get_height()))
 
 
 class Ampulheta(pygame.sprite.Sprite):
     def __init__(self, linha, coluna):
         super().__init__()
-        self.image = pygame.image.load('images/ampulheta.png')
+        self.image = pygame.image.load('data/images/ampulheta.png')
         self.rect = pygame.Rect((coluna * (self.image.get_width()), linha * (self.image.get_height())),
                                 (self.image.get_width(), self.image.get_height()))
 
@@ -83,8 +83,8 @@ class Enemy(pygame.sprite.Sprite):
 
         # Animção Inimigo
         self.anim = []
-        self.anim.append(pygame.image.load('images/ghost_1.png'))
-        self.anim.append(pygame.image.load('images/ghost_2.png'))
+        self.anim.append(pygame.image.load('data/images/ghost_1.png'))
+        self.anim.append(pygame.image.load('data/images/ghost_2.png'))
         self.image = self.anim[self.current_sprite]
         self.rect = pygame.Rect((coluna * (self.image.get_width()), linha * (self.image.get_height())),
                                 (32, 32))
@@ -116,7 +116,7 @@ class Enemy(pygame.sprite.Sprite):
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, personagem):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('images/bullet.png')
+        self.image = pygame.image.load('data/images/bullet.png')
         self.rect = pygame.Rect(personagem.rect.center, (self.image.get_width(), self.image.get_height()))
         self.speedX = 0
         self.speedY = 0
@@ -148,22 +148,22 @@ class Player(pygame.sprite.Sprite):
         self.current_sprite = 0
         self.anim_speed = 0.20
 
-        self.j_sound = pygame.mixer.Sound('sounds/jump.wav')
-        self.k_sound = pygame.mixer.Sound('sounds/kill.wav')
-        self.s_sound = pygame.mixer.Sound('sounds/shoot.wav')
+        self.j_sound = pygame.mixer.Sound('data/sounds/jump.wav')
+        self.k_sound = pygame.mixer.Sound('data/sounds/kill.wav')
+        self.s_sound = pygame.mixer.Sound('data/sounds/shoot.wav')
 
         # Carregando imagens
-        self.idle = pygame.image.load('images/idle.png')
-        self.air_shoot = pygame.image.load('images/jump_shoot.png')
-        self.air = pygame.image.load('images/air.png')
-        self.shoot = pygame.image.load('images/shoot.png')
-        self.dmg = pygame.image.load('images/dmg.png')
+        self.idle = pygame.image.load('data/images/idle.png')
+        self.air_shoot = pygame.image.load('data/images/jump_shoot.png')
+        self.air = pygame.image.load('data/images/air.png')
+        self.shoot = pygame.image.load('data/images/shoot.png')
+        self.dmg = pygame.image.load('data/images/dmg.png')
 
         # Animação de correr
         self.run = []
-        self.run.append(pygame.image.load('images/run_1.png'))
-        self.run.append(pygame.image.load('images/run_2.png'))
-        self.run.append(pygame.image.load('images/run_3.png'))
+        self.run.append(pygame.image.load('data/images/run_1.png'))
+        self.run.append(pygame.image.load('data/images/run_2.png'))
+        self.run.append(pygame.image.load('data/images/run_3.png'))
 
         self.image = self.idle
         self.rect = self.image.get_rect()
@@ -300,8 +300,8 @@ class Camera:
                 self.draw_area.blit(s.image, (s.rect.x - self.offset_x, s.rect.y - self.offset_y))
 
 
-font = pygame.font.Font('pixelart.ttf', 48)
-font2 = pygame.font.Font('pixelart.ttf', 16)
+font = pygame.font.Font('data/pixelart.ttf', 48)
+font2 = pygame.font.Font('data/pixelart.ttf', 16)
 
 click = False
 
@@ -486,7 +486,7 @@ def creditos():
 def game():
     global bullet, l_time, dmg_time, current_time, click, win, lose
 
-    music = pygame.mixer.Sound('sounds/game.wav')
+    music = pygame.mixer.Sound('data/sounds/game.wav')
     music.set_volume(10)
     music.play(-1)
 
@@ -535,7 +535,6 @@ def game():
 
     running = True
     while running:
-
         cam.start_drawing()
         cam.draw_group(bgs)
         cam.draw_group(tiles)
