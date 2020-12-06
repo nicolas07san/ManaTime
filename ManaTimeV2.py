@@ -1,8 +1,8 @@
 import pygame
 import random
 import sys
-import shutil
-import zipfile
+import zlib
+import os
 
 
 # Iniciando Pygame
@@ -12,15 +12,24 @@ clock = pygame.time.Clock()
 
 # Compressão e Descompressão
 def compress():
-    shutil.make_archive('data', 'zip', './', 'data')
-    shutil.rmtree('data', True)
+    with open('data/images/background.png', 'rb') as imageFile:
+        compressed = zlib.compress((imageFile.read()), 9)
+
+    imagetxt = open('data/images/background.txt', 'wb')
+    imagetxt.write(compressed)
+    imagetxt.close()
+    os.remove('data/images/background.png')
 
 
 def descompress():
-    z = zipfile.ZipFile('data.zip', 'r')
-    z.extractall()
-    z.close()
-    shutil.rmtree('data.zip', True)
+    read_file = open('data/images/background.txt', 'rb').read()
+
+    decompressed = zlib.decompress(read_file)
+
+    dimg = open('data/images/background.png', 'wb')
+    dimg.write(decompressed)
+    dimg.close()
+    os.remove('data/images/background.txt')
 
 
 # Configurando Tamanho da tela
@@ -319,8 +328,8 @@ class Camera:
                 self.draw_area.blit(s.image, (s.rect.x - self.offset_x, s.rect.y - self.offset_y))
 
 
-font = pygame.font.Font('pixelart.ttf', 48)
-font2 = pygame.font.Font('pixelart.ttf', 16)
+font = pygame.font.Font('data/pixelart.ttf', 48)
+font2 = pygame.font.Font('data/pixelart.ttf', 16)
 
 click = False
 
