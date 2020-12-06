@@ -1,16 +1,34 @@
 import pygame
 import random
 import sys
+import shutil
+import zipfile
+
 
 # Iniciando Pygame
 pygame.init()
 clock = pygame.time.Clock()
+
+
+# Compressão e Descompressão
+def compress():
+    shutil.make_archive('data', 'zip', './', 'data')
+    shutil.rmtree('data', True)
+
+
+def descompress():
+    z = zipfile.ZipFile('data.zip', 'r')
+    z.extractall()
+    z.close()
+    shutil.rmtree('data.zip', True)
+
 
 # Configurando Tamanho da tela
 screen_width = 1280
 screen_height = 720
 screen_size = (1280, 720)
 screen = pygame.display.set_mode(screen_size)
+descompress()
 
 # Logo e Nome da janela
 logo = pygame.image.load('data/images/logo.png')
@@ -301,8 +319,8 @@ class Camera:
                 self.draw_area.blit(s.image, (s.rect.x - self.offset_x, s.rect.y - self.offset_y))
 
 
-font = pygame.font.Font('data/pixelart.ttf', 48)
-font2 = pygame.font.Font('data/pixelart.ttf', 16)
+font = pygame.font.Font('pixelart.ttf', 48)
+font2 = pygame.font.Font('pixelart.ttf', 16)
 
 click = False
 
@@ -382,6 +400,7 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                compress()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
@@ -431,6 +450,7 @@ def h2p():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                compress()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
@@ -476,6 +496,7 @@ def creditos():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                compress()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
@@ -591,6 +612,7 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                compress()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
@@ -689,7 +711,9 @@ def endgame():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                compress()
                 sys.exit()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
             if event.type == pygame.MOUSEBUTTONUP:
